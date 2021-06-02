@@ -141,7 +141,6 @@ BOOL CtestSpeechDlg::OnInitDialog()
 	//m_btnB.Create(L"btn1", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON1);
 	//m_btnC.Create(L"btn2", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON2);
 	//m_btnD.Create(L"btn3", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON3);
-	
 
 	//for (int i = 0; i < ROW; i++)  for (int j = 0; j < COL; j++)
 	//m_btnArr[i][j].Create(L"-", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(0, 0, 64, 64), this, IDC_PNG_BUTTON(i,j));
@@ -174,40 +173,20 @@ BOOL CtestSpeechDlg::OnInitDialog()
 	}
 
 	
-	for (int i = 0; i < PNG_ROW; i++)  
+	// 16个候选图片，4*4 排列
+	for (int i = 0; i < PNG_ROW; i++)  {
 		for (int j = 0; j < PNG_COL; j++)
 		{
 			m_btnArray[ i * PNG_ROW + j].MoveWindow( i * 64 + 16, j * 64 + 100, 64, 64);
 		}
+	}
 
-
-
-	
+		   	
 	//m_btnA.SetWindowText(m_nameArray[0]);
 	//m_btnA.MoveWindow(0 + 16,100,64,64);
 	//m_btnA.SetButtonNormalBitmapEx(_T("./res/apple.png")); 
 	//m_btnA.SetButtonDownBitmapEx(_T("./res/apple.png"));
 	//m_btnA.SetButtonUpBitmapEx(_T("./res/apple.png"));
-	//
-	//m_btnB.SetWindowText(m_nameArray[1]);
-	//m_btnB.MoveWindow(64+16, 100,64,64);
-	//m_btnB.SetButtonNormalBitmapEx(_T("./res/orange.png")); 
-	//m_btnB.SetButtonDownBitmapEx(_T("./res/orange.png"));
-	//m_btnB.SetButtonUpBitmapEx(_T("./res/orange.png"));
-
-	//m_btnC.SetWindowText(m_nameArray[2]);
-	//m_btnC.MoveWindow(64*2+16, 100,64,64);
-	//m_btnC.SetButtonNormalBitmapEx(_T("./res/grapes.png"));
-	//m_btnC.SetButtonDownBitmapEx(_T("./res/grapes.png"));
-	//m_btnC.SetButtonUpBitmapEx(_T("./res/grapes.png"));
-
- //   m_btnD.SetWindowText(m_nameArray[3]);
-	//m_btnD.MoveWindow(64 * 3 + 16, 100,64,64);
-	//m_btnD.SetButtonNormalBitmapEx(_T("./res/tomatoes.png"));
-	//m_btnD.SetButtonDownBitmapEx(_T("./res/tomatoes.png"));
-	//m_btnD.SetButtonUpBitmapEx(_T("./res/tomatoes.png"));
-
-
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -391,12 +370,16 @@ void CtestSpeechDlg::OnPngButton()
 		PlaySound(_T("./assets/sound/yang0.wav"), NULL, SND_FILENAME | SND_ASYNC);
 		//Beep(1000, 300);
 	}
-
 	m_curSelect.Empty();
 	m_rightSelect.Empty();
 
-
 	UpdateData(FALSE);
+
+	Sleep(2000);
+	OnBnClickedButton1();   // 新的语言听写
+
+
+	
 }
 
 
