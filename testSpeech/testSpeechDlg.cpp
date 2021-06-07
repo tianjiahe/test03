@@ -375,7 +375,7 @@ void CtestSpeechDlg::OnPngButton()
 
 	UpdateData(FALSE);
 
-	Sleep(2000);
+	Sleep(2000);            // 等待异步的语言播放结束后执行
 	OnBnClickedButton1();   // 新的语言听写
 
 
