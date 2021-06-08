@@ -54,6 +54,10 @@ CtestSpeechDlg::CtestSpeechDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_TESTSPEECH_DIALOG, pParent)
 	, m_txt2Speech(_T(""))
 	, m_strMsg(_T(""))
+	, m_isContinue(FALSE)
+	, m_nScore(0)
+	, m_nErrScore(0)
+	, m_sTip(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_bGotReco = FALSE;
@@ -64,6 +68,10 @@ void CtestSpeechDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SPEECH, m_txt2Speech);
 	DDX_Text(pDX, IDC_STATIC_MSG, m_strMsg);
+	DDX_Check(pDX, IDC_CHECK1, m_isContinue);
+	DDX_Text(pDX, IDC_STATIC_SCORE, m_nScore);
+	DDX_Text(pDX, IDC_STATIC_ERRSCORE, m_nErrScore);
+	DDX_Text(pDX, IDC_STATIC_TIP, m_sTip);
 }
 
 BEGIN_MESSAGE_MAP(CtestSpeechDlg, CDialogEx)
@@ -137,10 +145,12 @@ BOOL CtestSpeechDlg::OnInitDialog()
 
 	// MSSListen(); 
 
-	//m_btnA.Create(L"btn0", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON0);
+	m_btnA.Create(L"btn0", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON0);
 	//m_btnB.Create(L"btn1", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON1);
 	//m_btnC.Create(L"btn2", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON2);
 	//m_btnD.Create(L"btn3", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON3);
+
+	
 
 	//for (int i = 0; i < ROW; i++)  for (int j = 0; j < COL; j++)
 	//m_btnArr[i][j].Create(L"-", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(0, 0, 64, 64), this, IDC_PNG_BUTTON(i,j));
@@ -181,12 +191,16 @@ BOOL CtestSpeechDlg::OnInitDialog()
 		}
 	}
 
+	
+	
+	m_btnA.SetButtonNormalBitmapEx(_T("./assets/木瓜1.png")); 
+	m_btnA.SetButtonDownBitmapEx(_T("./assets/木瓜1.png"));
+	m_btnA.SetButtonUpBitmapEx(_T("./assets/木瓜1.png"));
+    m_btnA.MoveWindow(390, 150, 128, 128);
 		   	
 	//m_btnA.SetWindowText(m_nameArray[0]);
 	//m_btnA.MoveWindow(0 + 16,100,64,64);
-	//m_btnA.SetButtonNormalBitmapEx(_T("./res/apple.png")); 
-	//m_btnA.SetButtonDownBitmapEx(_T("./res/apple.png"));
-	//m_btnA.SetButtonUpBitmapEx(_T("./res/apple.png"));
+
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -362,23 +376,68 @@ void CtestSpeechDlg::OnPngButton()
 	if (m_curSelect.IsEmpty() || m_rightSelect.IsEmpty())  return;
 	//MessageBox((m_curSelect == m_rightSelect) ? L"哈！你答对了!" : L"哎,错了");
 	bool isRight = (m_curSelect == m_rightSelect);
-	m_strMsg = (isRight) ? L"哈！你答对了!" : L"哎,错了";
+	
+	
+
 	if (isRight)
-	{		//Beep(2000, 160);
+	{	// Beep(2000, 160);
+		m_strMsg = _T("哈！你答对了!");
+		m_nScore += 1;
 		PlaySound(_T("./assets/sound/gou0.wav"), NULL, SND_FILENAME | SND_ASYNC );
-	}else {
+		
+		// 隐藏提示图片
+		m_btnA.SetButtonNormalBitmapEx(_T("./assets/木瓜1.png"));
+		m_btnA.SetButtonDownBitmapEx(_T("./assets/木瓜1.png"));
+		m_btnA.SetButtonUpBitmapEx(_T("./assets/木瓜1.png"));
+
+
+	}else{
+		// Beep(1000, 300);
+		m_strMsg = _T("哎,错了");
+		m_nErrScore += 1;
+
+
+		// 正确答案提示-----------------------------
+		//m_btnA.SetWindowText(m_rightSelect);
+		CString btnFile = _T("./assets/en/") + m_rightSelect + _T(".png");
+		m_btnA.SetButtonNormalBitmapEx(btnFile);
+		m_btnA.SetButtonDownBitmapEx(btnFile);
+		m_btnA.SetButtonUpBitmapEx(btnFile);
+		m_sTip = m_rightSelect;
+
+		/*
+		  https://blog.csdn.net/qq_22642239/article/details/88354831 
+		*/
+		m_btnA.SendMessage(WM_PAINT, 0, 0);       // 在无效化窗口区域后利用SendMessage 发送一条WM_PAINT消息来强制立即重画，不走消息队列。
+		
+
+		//m_btnA.UpdateWindow();            // 以下都是激发 WM_PAINT 走消息队列为空闲是有windows默认执行。最低优先级，刷新效果不满足要求。
+		//CRect rect;
+		//m_btnA.GetWindowRect(&rect);
+		//m_btnA.RedrawWindow(&rect, 0);
+        //m_btnA.ValidateRect(rect);           
+		//m_btnA.Invalidate(FALSE);
+		//--------------------------------------------
+
 		PlaySound(_T("./assets/sound/yang0.wav"), NULL, SND_FILENAME | SND_ASYNC);
-		//Beep(1000, 300);
+
+
 	}
 	m_curSelect.Empty();
 	m_rightSelect.Empty();
 
 	UpdateData(FALSE);
 
-	Sleep(2000);            // 等待异步的语言播放结束后执行
-	OnBnClickedButton1();   // 新的语言听写
+	if ((m_nScore + m_nErrScore)== SCORE_MAX) { 
+		MessageBox(_T(" Game Over "));  
+		return; 
+	}
 
-
+	if (m_isContinue) {
+		Sleep(2000);            // 等待异步的语言播放结束后执行
+		OnBnClickedButton1();   // 新的语言播报
+	}
+	
 	
 }
 

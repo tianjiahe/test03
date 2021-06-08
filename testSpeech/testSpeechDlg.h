@@ -15,9 +15,11 @@
 #define PNG_COL     4
 #define PNG_CNT     (PNG_ROW * PNG_COL)
 
-#define WM_RECORD   WM_USER + 100							// 定义消息
-//#define IDC_PNG_BUTTON(row,col)   (6000 + row * 4 + col)    // 按钮组的起始ID
-#define IDC_PNG_BUTTON(index)   (6000 + index)    // 按钮组的起始ID
+#define WM_RECORD   WM_USER + 100								// 定义消息
+//#define IDC_PNG_BUTTON(row,col)   (6000 + row * 4 + col)      // 按钮组的起始ID
+#define IDC_PNG_BUTTON(index)   (6000 + index)					// 按钮组的起始ID
+
+#define SCORE_MAX     (10)                                      // 题目总数量 
 
 // CtestSpeechDlg 对话框
 class CtestSpeechDlg : public CDialogEx
@@ -71,8 +73,10 @@ public:
 
 	CStringList  m_nameList;
 	CStringArray m_nameArray;
+
 	CPngButton	 m_btnA, m_btnB, m_btnC, m_btnD;
 
+	
 	CPngButton   m_btnArray[ PNG_CNT ];
 
 	//vector<CPngButton> m_btnArray;
@@ -83,6 +87,12 @@ public:
 
 
 	void GetFileFromDir(CString csDirPath);
+	// 连续语音播放
+	BOOL m_isContinue;
+	// 计分板
+	int m_nScore;
+	int m_nErrScore;
+	CString m_sTip;
 };
 
 
