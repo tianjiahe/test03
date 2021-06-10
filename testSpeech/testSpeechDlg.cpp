@@ -72,6 +72,7 @@ void CtestSpeechDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_SCORE, m_nScore);
 	DDX_Text(pDX, IDC_STATIC_ERRSCORE, m_nErrScore);
 	DDX_Text(pDX, IDC_STATIC_TIP, m_sTip);
+	DDX_Control(pDX, IDC_BUTTON_TIP, m_btnTip);
 }
 
 BEGIN_MESSAGE_MAP(CtestSpeechDlg, CDialogEx)
@@ -143,14 +144,14 @@ BOOL CtestSpeechDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 
-	// MSSListen(); 
+	// MSSListen(); // 听写
 
-	m_btnA.Create(L"btn0", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON0);
-	//m_btnB.Create(L"btn1", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON1);
-	//m_btnC.Create(L"btn2", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON2);
-	//m_btnD.Create(L"btn3", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON3);
+	m_btnA.Create(_T("btn0"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(20, 10, 100, 100), this, IDC_PNG_BUTTON0);
+	m_btnA.SetButtonNormalBitmapEx(_T("./assets/back.png"));
+	m_btnA.SetButtonDownBitmapEx(_T("./assets/back.png"));
+	m_btnA.SetButtonUpBitmapEx(_T("./assets/back.png"));
+	m_btnA.MoveWindow(390, 150, 128, 128);
 
-	
 
 	//for (int i = 0; i < ROW; i++)  for (int j = 0; j < COL; j++)
 	//m_btnArr[i][j].Create(L"-", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(0, 0, 64, 64), this, IDC_PNG_BUTTON(i,j));
@@ -175,8 +176,9 @@ BOOL CtestSpeechDlg::OnInitDialog()
 	CString  btnFile;
 	for (int i = 0; i < m_nameArray.GetCount(); i++)
 	{
-		m_btnArray[i].SetWindowText(m_nameArray[i]);
 		btnFile = _T("./assets/en/") + m_nameArray[i] + _T(".png");
+
+		m_btnArray[i].SetWindowText(m_nameArray[i]);
 		m_btnArray[i].SetButtonNormalBitmapEx(btnFile);
 		m_btnArray[i].SetButtonDownBitmapEx(btnFile);
 		m_btnArray[i].SetButtonUpBitmapEx(btnFile);
@@ -192,14 +194,14 @@ BOOL CtestSpeechDlg::OnInitDialog()
 	}
 
 	
+	//m_btnA.SubclassWindow(m_btnTip.GetSafeHwnd());
+	//m_btnA.SubclassDlgItem(IDC_BUTTON_TIP, this);
+	//m_btnA.Attach(m_btnTip.GetSafeHwnd());
+	//m_btnA.MoveWindow(390, 150, 128, 128);
 	
-	m_btnA.SetButtonNormalBitmapEx(_T("./assets/木瓜1.png")); 
-	m_btnA.SetButtonDownBitmapEx(_T("./assets/木瓜1.png"));
-	m_btnA.SetButtonUpBitmapEx(_T("./assets/木瓜1.png"));
-    m_btnA.MoveWindow(390, 150, 128, 128);
 		   	
 	//m_btnA.SetWindowText(m_nameArray[0]);
-	//m_btnA.MoveWindow(0 + 16,100,64,64);
+	
 
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -272,6 +274,7 @@ void CtestSpeechDlg::MSSSpeak(LPCTSTR m_txt2Speech)
 	}
 }
 
+/* 获得指定文件夹中的文件名称 */
 void CtestSpeechDlg::GetFileFromDir(CString csDirPath)
 {
 	csDirPath += L"*.png";
@@ -374,10 +377,8 @@ void CtestSpeechDlg::MSSListen()
 void CtestSpeechDlg::OnPngButton()
 {
 	if (m_curSelect.IsEmpty() || m_rightSelect.IsEmpty())  return;
-	//MessageBox((m_curSelect == m_rightSelect) ? L"哈！你答对了!" : L"哎,错了");
-	bool isRight = (m_curSelect == m_rightSelect);
-	
-	
+
+	bool isRight = (m_curSelect == m_rightSelect);   // 答案对比
 
 	if (isRight)
 	{	// Beep(2000, 160);
@@ -396,7 +397,6 @@ void CtestSpeechDlg::OnPngButton()
 		m_strMsg = _T("哎,错了");
 		m_nErrScore += 1;
 
-
 		// 正确答案提示-----------------------------
 		//m_btnA.SetWindowText(m_rightSelect);
 		CString btnFile = _T("./assets/en/") + m_rightSelect + _T(".png");
@@ -405,24 +405,30 @@ void CtestSpeechDlg::OnPngButton()
 		m_btnA.SetButtonUpBitmapEx(btnFile);
 		m_sTip = m_rightSelect;
 
-		/*
-		  https://blog.csdn.net/qq_22642239/article/details/88354831 
-		*/
-		m_btnA.SendMessage(WM_PAINT, 0, 0);       // 在无效化窗口区域后利用SendMessage 发送一条WM_PAINT消息来强制立即重画，不走消息队列。
-		
 
-		//m_btnA.UpdateWindow();            // 以下都是激发 WM_PAINT 走消息队列为空闲是有windows默认执行。最低优先级，刷新效果不满足要求。
-		//CRect rect;
-		//m_btnA.GetWindowRect(&rect);
-		//m_btnA.RedrawWindow(&rect, 0);
-        //m_btnA.ValidateRect(rect);           
-		//m_btnA.Invalidate(FALSE);
-		//--------------------------------------------
-
-		PlaySound(_T("./assets/sound/yang0.wav"), NULL, SND_FILENAME | SND_ASYNC);
 
 
 	}
+
+	/* 这里需要立即刷新窗口，WIndows的WM_PAINT是消息队列为空之前的最后一个消息，不满足要求,
+	   下面的3个方法是可行的
+	  https://blog.csdn.net/qq_22642239/article/details/88354831
+	  https://blog.csdn.net/cashey1991/article/details/7352781
+	  https://blog.csdn.net/wxl1986622/article/details/7729196?utm_medium=distribute.pc_relevant.none-task-blog-baidujs_title-8&spm=1001.2101.3001.4242
+	*/
+
+	/* 1：配合使用，设置无效区域，立即刷新 */
+	//m_btnA.Invalidate();      
+	//m_btnA.UpdateWindow();    
+
+	// 2. == Invalidate + UpdateWindow
+	m_btnA.RedrawWindow();
+
+	/* 3：可立即刷新 */
+	//m_btnA.SendMessage(WM_PAINT, 0, 0);			// 在无效化窗口区域后利用SendMessage 发送一条WM_PAINT消息来强制立即重画，不走消息队列。
+
+	PlaySound(_T("./assets/sound/yang0.wav"), NULL, SND_FILENAME | SND_ASYNC);
+
 	m_curSelect.Empty();
 	m_rightSelect.Empty();
 
@@ -437,7 +443,7 @@ void CtestSpeechDlg::OnPngButton()
 		Sleep(2000);            // 等待异步的语言播放结束后执行
 		OnBnClickedButton1();   // 新的语言播报
 	}
-	
+
 	
 }
 

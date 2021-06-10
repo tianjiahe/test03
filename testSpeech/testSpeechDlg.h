@@ -93,6 +93,7 @@ public:
 	int m_nScore;
 	int m_nErrScore;
 	CString m_sTip;
+	CButton m_btnTip;
 };
 
 

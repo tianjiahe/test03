@@ -16,6 +16,8 @@
 #define IDC_STATIC_SCORE                1009
 #define IDC_STATIC_ERRSCORE             1010
 #define IDC_STATIC_TIP                  1011
+#define IDC_BUTTON3                     1012
+#define IDC_BUTTON_TIP                  1012
 #define IDC_PNG_BUTTON0                 5000
 #define IDC_PNG_BUTTON1                 5001
 #define IDC_PNG_BUTTON2                 5002
@@ -27,7 +29,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1012
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           106
 #endif
 #endif
